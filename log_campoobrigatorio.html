@@ -1,0 +1,2771 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sistema de controle de restaurantes universit�rios - Agendar refei��es</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="/mocca/assets/css/browser-detector-min.css" />
+        <link rel="stylesheet" type="text/css" href="/mocca/assets/css/smoothness/jquery-ui-min.css"/>
+        <link rel="stylesheet" type="text/css" href="/mocca/assets/css/mocca-pack-ufsm-min.css"/>
+        <link rel="stylesheet" type="text/css" href="/ru/assets/css/local.css"/>
+
+        <script type="text/javascript" src="/mocca/assets/js/browser-detector-min.js"></script>
+        <script type="text/javascript" src="/mocca/assets/js/jquery-min.js"></script>
+        <script type="text/javascript" src="/mocca/assets/js/jquery-ui-min.js"></script>
+        <script type="text/javascript" src="/mocca/assets/js/jquery-mocca-pack-min.js"></script>
+
+        
+            
+            <script type="text/javascript" src="/ru/dwr/engine.js"></script>
+            <script type="text/javascript" src="/ru/dwr/util.js"></script>
+            <script type="text/javascript" src="/mocca/assets/js/dwr.js"></script>
+        
+        
+    </head>
+    <body>
+        <div class="band shadowed no-print" id="app_top">
+            <!-- menu navbar -->
+            
+
+
+    
+    
+    
+    
+    
+
+    <nav class="band navbar ufsm-top">
+        <div class="container no-padding-v">
+            <ul class="nav mini">
+                
+                    <li>
+                        <div class="btn-group">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+                                Institucional <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/autenticacao"><i class="icon-globe"></i> Autentica��o de Documentos</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/biblioteca"><i class="icon-globe"></i> Biblioteca</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/concursos/inscricao/concursos.html"><i class="icon-globe"></i> Concursos e Sele��es P�blicas</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/processos"><i class="icon-globe"></i> Consulta Processos</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/ementario"><i class="icon-globe"></i> Ement�rio</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/jai"><i class="icon-globe"></i> Jornada Acad�mica Integrada</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/ouvidoria"><i class="icon-globe"></i> Ouvidoria</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/documentos"><i class="icon-globe"></i> Portal de Documentos</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/patrimonio"><i class="icon-globe"></i> Portal do Patrim�nio</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/ufsm-em-numeros"><i class="icon-globe"></i> UFSM em N�meros</a></li>
+                                    
+                            </ul>
+                        </div>
+                    </li>
+                
+                
+                    <li>
+                        <div class="btn-group">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+                                Aluno <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/agendamento"><i class="icon-globe"></i> Agendamento</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/aluno"><i class="icon-globe"></i> Portal do Aluno</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/projetos"><i class="icon-globe"></i> Projetos</a></li>
+                                    
+                                    <li role="menuitem"><a tabindex="-1" href="http://portal.ufsm.br/ru"><i class="icon-globe"></i> Restaurante Universit�rio</a></li>
+                                    
+                            </ul>
+                        </div>
+                    </li>
+                
+                
+                
+            </ul>
+
+            
+        </div>
+    </nav>
+
+
+            <!-- main navbar -->
+            <nav class="band navbar ufsm gradient">
+                
+                
+                
+                
+                
+                
+                
+
+                <div class="container">
+                    <ul class="nav">
+                        <li><a class="uppercase humanist-font" href="/ru/index.html"><span class="bold">UFSM</span> | Sistema de controle de restaurantes universit�rios</a></li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li title="Caixa Postal">
+                            <a tabindex="-1" href="/caixapostal/index.html"><i class="icon-envelope"></i> Caixa postal <sup id="numeroDocumentosCaixaPostal" class="caixaPostalNaoLidos mini-font-size hidden"></sup></a>
+                        </li>
+                        <li>
+                            <div class="btn-group">
+                                
+                                    
+                                    
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                            <i class="icon-user"></i> Daniel dos Santos Pereira <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu">
+                                            
+                                            <li role="menuitem"><a tabindex="-1" href="/usuario/restrita/alterarSenha.html"><i class="icon-pencil"></i> Alterar senha</a></li>
+                                            <li role="menuitem"><a tabindex="-1" href="/ru/helpMenu.html"><i class="icon-question-sign"></i> Ajuda</a></li>
+                                            <li role="menuitem" class="divider"></li>
+                                            <li role="menuitem"><a tabindex="-1" href="/ru/logout.html"><i class="icon-signout"></i> Sair</a></li>
+                                        </ul>
+                                    
+                                
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <nav class="band navbar gradient " aria-label="">
+        <div class="container mini-padding-v">
+            <ul class="nav responsive">
+                
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+        
+          
+          
+          
+          
+        
+            
+            
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+                
+            
+            
+        
+
+        
+        
+            
+                <li class=" ">
+                    <div class="btn-group block">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="11qs7FbS8UavaO0y">
+                             <span class="icon-group"></span>  Situa��o <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/extratoSimplificado.html" target=""  id="fHqI9Pm2Ybfo2Aut">
+                         Extrato
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/situacao.html" target=""  id="UXyQWwxANr97D9VG">
+                         Informa��es gerais
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+            <li class="divider"></li>
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/transferencia/credito/credito.html?action=list" target=""  id="w5NTKK6bXZ6Iv4gw">
+                         Transfer�ncia de cr�ditos entre usu�rios
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+            
+                        </ul>
+                    </div>
+                </li>
+            
+            
+            
+            
+        
+        
+    
+
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/cardapio.html" target=""  id="L7QClzZhy9h8uLtW">
+                         <span class="fa fa-newspaper-o"></span>  Card�pio
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+        
+          
+          
+          
+          
+        
+            
+            
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+                
+            
+            
+        
+
+        
+        
+            
+                <li class=" ">
+                    <div class="btn-group block">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="yeTNDdaLcBYEw9n7">
+                             <span class="icon-calendar"></span>  Agendamento <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/agendamento/form.html" target=""  id="qE1FnxoJBNeXerga">
+                         Agendar refei��es
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/agendamento/agendamento.html?action=list" target=""  id="DfuuLtFgNU1afaA0">
+                         Consulta de agendamentos
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/agendamento/fila.html" target=""  id="dmUv5uEBLlfH8w7s">
+                         Agendamentos dispon�veis
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+            
+                        </ul>
+                    </div>
+                </li>
+            
+            
+            
+            
+        
+        
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+        
+          
+          
+          
+          
+        
+            
+            
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+                
+            
+            
+        
+
+        
+        
+            
+                <li class=" ">
+                    <div class="btn-group block">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="d4ZRUkhE8U2n7yLi">
+                             <span class="icon-credit-card"></span>  Carteira <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/solicitacao/carteira.html?action=list" target=""  id="NqYhyOvY3YxS9PwG">
+                         Minhas solicita��es
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/carteira/perda/form.html" target=""  id="b9rR8IZ6Ur6j443G">
+                         Registro de perda
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+         
+          
+          
+          
+          
+          
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+            
+                
+                    
+                    
+                        
+                    
+                
+            
+        
+
+        
+        
+            
+            
+            
+            
+                <li class=" ">                    
+                    <a  href="/ru/usuario/carteira.html?action=list" target=""  id="LI6israisod7rJld">
+                         Minhas carteiras
+                        </a>
+                    </li>
+            
+        
+        
+    
+
+            
+                        </ul>
+                    </div>
+                </li>
+            
+            
+            
+            
+        
+        
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+        
+          
+          
+          
+          
+          
+        
+            
+            
+        
+        
+        
+
+        
+        
+            
+                
+                    
+                    
+                
+            
+            
+        
+
+        
+        
+            
+                
+            
+            
+        
+
+        
+        
+            
+            
+            
+                <li class=" bold align-right-tablet-desktop">                    
+                    <span id="saldoUsuario">
+                         Saldo atual: 
+                        </span>
+                    </li>
+            
+            
+        
+        
+    
+
+        
+            </ul>
+        </div>
+    </nav>
+        <!-- main -->
+        <div class="band expansible" id="app_content">
+            <div class="container">
+                
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="box bordered rounded shadowed success hidden" id="notificacaoFilaEsperaAgendamento">
+    <div class="box-content">
+        Foi encontrado um agendamento para uma posi��o sua da fila de espera!
+    </div>
+</div>
+
+
+    <h2 class="h2 primary stroked-bottom text-shadowed margin-bottom"><a class="skiplink-anchor" name="title2_anchor" style="" tabindex="-1">Agendar refei��es</a></h2>
+
+    
+    <form id="form" action="/ru/usuario/agendamento/form.html" method="post">
+        <div class="row">
+            <div class="span6">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+      
+       
+    
+
+  
+      
+      
+    
+     
+   
+ 
+ 
+
+
+       
+      
+    
+
+
+
+
+    
+
+
+<div id="restaurante_wrapper">
+    
+        <label class="label" for="restaurante" id="restaurante_label">Restaurante<span class="required"></span></label>
+<br/>
+
+    
+    
+        
+            
+                
+                
+            
+            
+                
+            
+        
+        
+    
+    
+    <select id="restaurante"
+            name="restaurante"
+            class="selectfield  width-100"
+            style=""
+            
+            
+            
+            
+            >
+        
+            
+            
+                <option value="" label="--- Selecione um valor ---"/>
+            
+        
+        
+                    
+                        <option value="42" 
+                                data-debito="false">
+                            RU - Cachoeira
+                        </option>
+                    
+                        <option value="4" 
+                                data-debito="false">
+                            RU - Campus Frederico Westphalen
+                        </option>
+                    
+                        <option value="1" 
+                                data-debito="false">
+                            RU - Campus I
+                        </option>
+                    
+                        <option value="41" selected="selected"
+                                data-debito="false">
+                            RU - Campus II
+                        </option>
+                    
+                        <option value="2" 
+                                data-debito="false">
+                            RU - Centro
+                        </option>
+                    
+                        <option value="3" 
+                                data-debito="true">
+                            RU - Palmeira das Miss�es
+                        </option>
+                    
+                
+    </select>
+    <span class="pill error hidden" id="_restaurante"></span>
+</div>
+
+                
+            </div>
+            <div class="span6">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  
+               
+               
+              
+     
+              
+              
+            
+             
+
+      
+    
+
+    <div id="tiposRefeicao_wrapper">
+    <label class="label" for="tiposRefeicao" id="tiposRefeicao_label">Refei��es</label>
+<br/>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="tiposRefeicao" style="padding: 0.3em 0; " class="">
+    <ul class="list-h no-bullet responsive">
+        
+        
+        
+            
+                
+                    
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_bjWhMUzhl4PpQ9mf">
+        
+                            <input id="tiposRefeicao_0" name="tiposRefeicao" type="checkbox" value="1"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Caf�
+    </span>
+<br/>
+
+</li>
+
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_4ZbGZJqn4YBSSyxO">
+        
+                            <input id="tiposRefeicao_1" name="tiposRefeicao" type="checkbox" value="2" checked="checked"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Almo�o
+    </span>
+<br/>
+
+</li>
+
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_1bWYZ3f23o7QpRze">
+        
+                            <input id="tiposRefeicao_2" name="tiposRefeicao" type="checkbox" value="3"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Jantar
+    </span>
+<br/>
+
+</li>
+
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_2gpGJ22GPO6JJ94q">
+        
+                            <input id="tiposRefeicao_3" name="tiposRefeicao" type="checkbox" value="4"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Distribui��o
+    </span>
+<br/>
+
+</li>
+
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_F0v1rfUTfLeaiH6L">
+        
+                            <input id="tiposRefeicao_4" name="tiposRefeicao" type="checkbox" value="5"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Kit Desjejum
+    </span>
+<br/>
+
+</li>
+
+                    
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+
+<li class="no-padding " style="">
+    <span class="label no-bold" id="LabelTag_CoxC97M34TVOeN7I">
+        
+                            <input id="tiposRefeicao_5" name="tiposRefeicao" type="checkbox" value="6"/><input type="hidden" name="_tiposRefeicao" value="on"/>
+                        
+        Distribui��o 2 (Almo�o + Jantar)
+    </span>
+<br/>
+
+</li>
+
+                    
+                    
+                        
+                    
+                
+            
+            
+        
+    
+    </ul>
+</div>
+
+    <span class="pill error hidden" id="_tiposRefeicao"></span>
+</div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="span2">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+       
+    
+
+  
+      
+      
+    
+     
+         
+
+       
+      
+    
+
+    
+
+
+
+
+
+
+<div id="periodo_inicio_wrapper" class="" style="">
+    
+        <label class="label" for="periodo_inicio" id="periodo_inicio_label">In�cio<span class="required"></span></label>
+<br/>
+
+    
+    
+        
+            
+                
+                
+            
+            
+                
+            
+        
+        
+    
+    <input id="periodo_inicio"
+           type="text"
+           name="periodo.inicio"
+           class="textfield  date width-100"
+           style=""
+           value="13/02/2020"
+           
+           
+           
+            >
+    <span class="pill error hidden" id="_periodo_inicio"></span>
+    
+</div>
+
+
+<script type="text/javascript">
+    
+    
+    $(document).ready(function () {
+        $('#periodo_inicio:not(.manual-init)').dateTimePicker({
+            'mode': 'date',
+            'picker': {
+                'separator': ' ',
+                'minDate': $.DateUtils.toDate(''),
+                'maxDate': $.DateUtils.toDate(''),
+                'beforeShow': function () {
+                    var ret = {
+                        'minDate': $.DateUtils.toDate(''),
+                        'maxDate': $.DateUtils.toDate('')
+                    };
+                    var minField = '';
+                    var maxField = '';
+                    if (minField) {
+                        var min = $('#' + minField).dateVal();
+                        if (min) {
+                            ret.minDate = min;
+                        }
+                    }
+                    if (maxField) {
+                        var max = $('#' + maxField).dateVal();
+                        var ret = {};
+                        if (max) {
+                            ret.maxDate = max;
+                        }
+                    }
+                    return ret;
+                }
+            }
+        });
+    });
+</script>
+
+            </div>
+            <div class="span2">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+       
+    
+
+  
+      
+      
+    
+     
+         
+
+       
+      
+    
+
+    
+
+
+
+
+
+
+<div id="periodo_fim_wrapper" class="" style="">
+    
+        <label class="label" for="periodo_fim" id="periodo_fim_label">Fim<span class="required"></span> <span aria-hidden="true" class="icon-info-sign labelHint"></span></label>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#periodo_fim_label > .labelHint').qtip({
+        content: {text: 'A data final n�o pode ultrapassar 6 dias a partir da data de hoje.'}
+    });
+});
+</script>
+<br/>
+
+    
+    
+        
+            
+                
+                
+            
+            
+                
+            
+        
+        
+    
+    <input id="periodo_fim"
+           type="text"
+           name="periodo.fim"
+           class="textfield  date width-100"
+           style=""
+           value="13/02/2020"
+           
+           
+           
+            >
+    <span class="pill error hidden" id="_periodo_fim"></span>
+    
+</div>
+
+
+<script type="text/javascript">
+    
+    
+    $(document).ready(function () {
+        $('#periodo_fim:not(.manual-init)').dateTimePicker({
+            'mode': 'date',
+            'picker': {
+                'separator': ' ',
+                'minDate': $.DateUtils.toDate(''),
+                'maxDate': $.DateUtils.toDate(''),
+                'beforeShow': function () {
+                    var ret = {
+                        'minDate': $.DateUtils.toDate(''),
+                        'maxDate': $.DateUtils.toDate('')
+                    };
+                    var minField = '';
+                    var maxField = '';
+                    if (minField) {
+                        var min = $('#' + minField).dateVal();
+                        if (min) {
+                            ret.minDate = min;
+                        }
+                    }
+                    if (maxField) {
+                        var max = $('#' + maxField).dateVal();
+                        var ret = {};
+                        if (max) {
+                            ret.maxDate = max;
+                        }
+                    }
+                    return ret;
+                }
+            }
+        });
+    });
+</script>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="span3">
+                <img id="imgCaptcha" class="responsive" src="/ru/usuario/captcha.html"/>
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+          
+          
+       
+    
+
+  
+      
+      
+    
+     
+         
+
+       
+      
+    
+
+    
+
+
+
+
+
+
+<div id="captcha_wrapper" class="" style="">
+    
+        <label class="label" for="captcha" id="captcha_label">Digite o texto aqui<span class="required"></span> <span aria-hidden="true" class="icon-info-sign labelHint"></span></label>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('#captcha_label > .labelHint').qtip({
+        content: {text: 'N�o h� diferen�a entre mai�sculas e min�sculas.'}
+    });
+});
+</script>
+<br/>
+
+    
+    
+        
+            
+                
+                
+            
+            
+                
+            
+        
+        
+    
+    <input id="captcha"
+           type="text"
+           name="captcha"
+           class="textfield  width-100"
+           style=""
+           value=""
+           
+           
+           
+            >
+    <span class="pill error" id="_captcha">Campo obrigat�rio</span>
+    
+</div>
+
+            </div>
+        </div>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="form-actions bottom ">
+    
+
+    
+            
+            <button class="btn" id="ButtonTag_KQtaLdFBMWMzsvBX" onclick="window.location='/ru/usuario/agendamento/form.html?repetirUltimo=true'" type="button"><span aria-hidden="true" class="icon-copy"></span> Repetir dados do �ltimo agendamento</button>
+            <button class="btn primary hidden saveBtn" id="btnSubmitDebito" name="save" type="button"><span aria-hidden="true" class="icon-save"></span> Salvar</button>
+        
+    
+        
+            
+                <button class="btn primary saveBtn" data-lock-onclick="true" id="btnSubmit" name="save" type="submit"><span aria-hidden="true" class="icon-save"></span> Salvar</button>
+            
+            
+        
+    
+</div>
+
+
+
+    
+    
+
+
+    </form>
+    
+    <script>
+        $(document).ready(function () {
+            $("#restaurante").change(function () {
+                if ($("#restaurante option:selected").data("debito")) {
+                    $("#btnSubmitDebito").show();
+                    $("#btnSubmit").hide();
+                } else {
+                    $("#btnSubmitDebito").hide();
+                    $("#btnSubmit").show();
+                }
+            });
+            $("#btnSubmitDebito").confirmDialog({
+                content: "<strong>Aten��o!</strong><br /> Ao realizar o agendamento, seu saldo ser� debitado automaticamente para cada refei��o processada. Confirma a opera��o?",
+                yesBtn: {
+                    clickFunction: function () {
+                        $("#form").submit();
+                        $("#btnSubmitDebito").qtip('hide');
+                    }
+                }
+            });
+            $("#restaurante").change();
+        });
+    </script>
+
+    <script type="text/javascript" src="/ru/assets/js/functions.js"></script>
+    <script type="text/javascript">
+        
+        
+        $(document).ready(function () {
+            updateSaldo('/ru/usuario/saldoUsuarioJsonService/getSaldo.json');
+            getNotificacaoFilaEsperaAgendamento('/ru/usuario/filaEsperaAgendamentoNotificacaoJsonController/getNotificacao.json');
+        });
+    </script>
+
+            </div>
+        </div>
+        <!-- footer -->
+        <div class="band footer mini-font-size no-print">
+            <div class="container narrow stroked-top">
+                <div class="row">
+                    <div class="span6">
+                        <span class="dimmed">Sistema de controle de restaurantes universit�rios - Vers&atilde;o 1.11.6</span>
+                    </div>
+                    <div class="span6 align-right-tablet-desktop">
+                        <span class="dimmed">Copyright � 2020 CPD-UFSM. Todos os direitos reservados.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#app_top').govbar();
+                $('#app_top').skiplinks();
+            });
+        </script>
+        
+            <script type="text/javascript">
+                window.smartlook || (function (d) {
+                    var o = smartlook = function () {
+                        o.api.push(arguments)
+                    }, s = d.getElementsByTagName('script')[0];
+                    var c = d.createElement('script');
+                    o.api = new Array();
+                    c.async = true;
+                    c.type = 'text/javascript';
+                    c.charset = 'utf-8';
+                    c.src = '//rec.getsmartlook.com/recorder.js';
+                    s.parentNode.insertBefore(c, s);
+                })(document);
+                smartlook('init', 'a858add18837af913f9a80494573236ac9cb36a3');
+            </script>
+            <!-- Google Analytics -->
+            <script>
+                window.ga = window.ga || function () {
+
+                    (ga.q = ga.q || []).push(arguments)
+                }
+                ;
+                ga.l = +new Date;
+                ga('create', 'UA-11595822-1', 'auto');
+                ga('send', 'pageview');
+            </script> 
+            <script async src='https://www.google-analytics.com/analytics.js'></script> 
+            <!-- End Google Analytics -->
+        
+    </body>
+</html>
+
