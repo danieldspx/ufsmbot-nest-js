@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
 import { from, Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, take } from 'rxjs/operators';
 import { RoutineWrapper } from 'src/shared/routine-wrapper.interface';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { Student } from 'src/shared/student.interface';
@@ -22,7 +22,7 @@ export class DatabaseService {
         this.firestore = admin.firestore();
     }
 
-    getStudentByMatricula(matricula: string, password: string): Observable<DocumentReference> {
+    getStudentByCredentials(matricula: string, password: string): Observable<DocumentReference> {
         const encryptedPassword = this.encrypt(password);
         return from(
             this.firestore.collection('estudantes')
@@ -49,7 +49,27 @@ export class DatabaseService {
         )
     }
 
-    getStudentsToSchedule(limit: number, offset: number): Observable<StudentWrapper[]> {
+    getStudentByMatricula(matricula: string): Observable<StudentWrapper> {
+        return from(
+            this.firestore.collection('estudantes')
+                .where('matricula', '==', matricula)
+                .limit(1)
+                .get()
+        ).pipe(
+            mergeMap(querySnapshot => {
+                const studentData: Student = querySnapshot.docs[0].data() as Student;
+                const studentWrap: StudentWrapper = {
+                    matricula,
+                    password: this.decrypt(studentData.password),
+                    ref: querySnapshot.docs[0].ref
+                }
+                return of(studentWrap);
+            }),
+            take(1)
+        )
+    }
+
+    getStudentsToSchedule(limit: number, offset: number = 0): Observable<StudentWrapper[]> {
         const studentsToSchedule: StudentWrapper[] = [];
 
         const today = new Date();
@@ -57,7 +77,7 @@ export class DatabaseService {
         return from(
             this.firestore.collection('estudantes')
                 .where('lastSchedule', '==', null)
-                .where('agreementAccepted', '==', true)
+                .where('isFriend', '==', true)
                 .limit(limit)
                 .offset(offset)
                 .get()
@@ -75,7 +95,7 @@ export class DatabaseService {
                 return from(
                     this.firestore.collection('estudantes')
                         .where('lastSchedule', '<', this.utilService.addDays(3, today))
-                        .where('agreementAccepted', '==', true)
+                        .where('isFriend', '==', true)
                         .limit(limit)
                         .offset(offset)
                         .get()

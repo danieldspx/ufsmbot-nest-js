@@ -34,7 +34,7 @@ describe('DatabaseService', () => {
 
     testScheduler.run(helpers => {
       helpers.expectObservable(
-        service.getStudentByMatricula('201910481', '99147465').pipe(mergeMap(docRef => docRef.get()), map(doc => doc.data))
+        service.getStudentByCredentials('201910481', '99147465').pipe(mergeMap(docRef => docRef.get()), map(doc => doc.data))
       ).toBe('1ms a|', { a: { matricula: '2019104811' } })
     })
     // expect(await service.getStudentByMatricula(matricula, password).pipe(mergeMap(docRef => docRef.get()), map(doc => doc.data)).subscribe(x => x)).toHaveProperty('matricula', matricula);

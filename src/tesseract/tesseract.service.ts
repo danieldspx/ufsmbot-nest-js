@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as download from 'image-downloader';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, take } from 'rxjs/operators';
 import { createWorker, PSM } from 'tesseract.js';
 
 
 @Injectable()
 export class TesseractService {
-    downloadCaptchaImage(session: string){
+    private downloadCaptchaImage(session: string){
         const dir = `${__dirname}/temp`;
 
         const options = {
@@ -24,11 +24,11 @@ export class TesseractService {
         return from(download.image(options)).pipe(map((response: any) => response.filename), take(1))
     }
 
-    async recognizeCaptcha(filepath: string): Promise<string>{
+    private async recognizeCaptcha(filepath: string): Promise<string>{
         const worker = createWorker({
             langPath: `${__dirname}/../assets`,
             gzip: false,
-            logger: m => console.log(m)
+            // logger: m => console.log(m)
         });
 
         await worker.load();
@@ -40,12 +40,13 @@ export class TesseractService {
         });
         const result = await worker.recognize(filepath);
         await worker.terminate();
-        return result.data.text;
+        // return result.data.text.replace(/(\r\n|\n|\r)/gm, '');
+        return of("batata").toPromise();
     }
 
     getCaptchaSchedule(session: string): Observable<string> {
         return this.downloadCaptchaImage(session).pipe(
-            mergeMap(filepath => from(this.recognizeCaptcha(filepath))),
+            mergeMap(filepath => this.recognizeCaptcha(filepath)),
             take(1)
         )
     }

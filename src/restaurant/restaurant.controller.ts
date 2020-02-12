@@ -15,6 +15,6 @@ export class RestaurantController {
     auth() {
         // this.dbService.getStudentByMatricula('201910481', '99147465').subscribe(x => console.log(x))
         // this.restaurantService.auth().subscribe(next => {console.log(next)}, err => {console.log(err)});
-        this.tesseractService.recognizeCaptchaSchedule('230fd47a39ecc2ac22a77211e6fa');
+        // this.tesseractService.getCaptchaSchedule('230fd47a39ecc2ac22a77211e6fa');
     }
 }
