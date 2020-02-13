@@ -8,6 +8,7 @@ import { TesseractService } from 'src/tesseract/tesseract.service';
 import { Schedule } from './inferfaces/schedule.interface';
 import { RequestConfig } from './request/request-config.interface';
 import { RequestService } from './request/request.service';
+import fs = require('fs');
 
 @Injectable()
 export class RestaurantService {
@@ -38,9 +39,8 @@ export class RestaurantService {
 			);
 	}
 
-	agendarRefeicao(schedule: Schedule, captcha: string): Observable<Response> {
+	agendarRefeicao(schedule: Schedule, captcha: string): Observable<Response | never> {
 		const headers = [['Cookie', `JSESSIONID=${schedule.session}`]];
-
 		let bodyRequest = queryString.stringify({
 			'restaurante': schedule.restaurante,
 			'periodo.inicio': schedule.dia,
@@ -48,6 +48,8 @@ export class RestaurantService {
 			'captcha': captcha,
 			'save': ''
 		});
+
+		console.log('AGENDAR REFEICAO', captcha);
 
 		if (Array.isArray(schedule.refeicao)) {
 			for (const refeicao of schedule.refeicao) {
@@ -70,34 +72,34 @@ export class RestaurantService {
 
 				return from(res.text()).pipe(
 					mergeMap(html => {
-						if(this.hasCaptchaErrorOnHtml(html)){
-							console.log('Errow')
+						if(this.hasErrorOnHtml(html)){
+							fs.writeFile('teste.html', html, function(err) {
+								if(err) {
+									return console.log(err);
+								}
+								console.log("The file was saved!");
+							}); 
 							return throwError('Error on Captcha');
 						}
 						return of(res);
 					})
-				) as Observable<Response>
+				)
 			})
 		)
 	}
 
-	hasCaptchaErrorOnHtml(html: string){
-		const captchaReg = new RegExp(/(id="_captcha")(.*?)<\/span>/g);
+	private hasErrorOnHtml(html: string){
+		const captchaReg = new RegExp(/<span class="success pill"/g);
 		const innerHTML = html.match(captchaReg);
-		if(innerHTML !== null) {
-			const text = innerHTML[0].replace('id="_captcha">', '').replace('</span>','');
-			if(text.length !== 0) {
-				return true;
-			}
-		}
-		return false;
+		return innerHTML === null; // Meaning that we dont have success
 	}
 
 	scheduleTheMeal(schedule: Schedule, student: StudentWrapper): Observable<Schedule> {
+		console.log('ScheduleTheMeal', schedule.dia)
 		return this.tesseractService.getCaptchaSchedule(schedule.session)
 			.pipe(
 				mergeMap(captcha => this.agendarRefeicao(schedule, captcha)),
-				mapTo(schedule),
+				mapTo(schedule)
 			)
 	}
 
