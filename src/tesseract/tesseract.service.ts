@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as download from 'image-downloader';
-import { from, Observable } from 'rxjs';
-import { delay, map, mergeMap, take } from 'rxjs/operators';
+import { from, interval, Observable } from 'rxjs';
+import { map, mergeMap, take } from 'rxjs/operators';
 import { createWorker, PSM } from 'tesseract.js';
 
 
 @Injectable()
 export class TesseractService {
-    private downloadCaptchaImage(session: string){
+    private downloadCaptchaImage(session: string): Observable<string>{
         const dir = `${__dirname}/temp`;
-        console.log('Downloading image');
         const options = {
             url: 'https://portal.ufsm.br/ru/usuario/captcha.html',
             dest: `${__dirname}/temp/${session}.jpg`,
@@ -21,7 +20,7 @@ export class TesseractService {
             fs.mkdirSync(dir);
         }
 
-        return from(download.image(options)).pipe(map((response: any) => response.filename), take(1))
+        return from(download.image(options)).pipe(map((response: any) => response.filename))
     }
 
     private async recognizeCaptcha(filepath: string): Promise<string>{
@@ -40,16 +39,14 @@ export class TesseractService {
         });
         const result = await worker.recognize(filepath);
         await worker.terminate();
-
         return result.data.text.replace(/(\r\n|\n|\r)/gm, '');
     }
 
     getCaptchaSchedule(session: string): Observable<string> {
-        console.log('getCaptchaSchedule')
-        return this.downloadCaptchaImage(session).pipe(
-            delay(200),
-            mergeMap(filepath => this.recognizeCaptcha(filepath)),
-            take(1)
+        return interval(500).pipe(
+            take(1),
+            mergeMap(() => this.downloadCaptchaImage(session)),
+            mergeMap(filepath => this.recognizeCaptcha(filepath))
         )
     }
 }
