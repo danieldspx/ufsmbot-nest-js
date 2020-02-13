@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Moment } from 'moment';
-import { Observable } from 'rxjs';
-import { mergeMap, retry } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { concatAll, delay, mergeMap, retryWhen } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
 import { Schedule } from 'src/restaurant/inferfaces/schedule.interface';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
@@ -20,11 +20,12 @@ export class BotService {
         private readonly utilService: UtilService
     ) { }
 
-    scheduleForStudent(matricula: string){
+    scheduleForStudent(matricula: string) {
         this.dbService.getStudentByMatricula(matricula).subscribe(student => this.prepareScheduleForStudent(student))
     }
 
     prepareScheduleForStudent(student: StudentWrapper, daysException: any[] = []) {
+        console.log('PrepareScheduleForStudent');
         let routines: RoutineWrapper[] = [];
         this.dbService.getStudentRoutines(student.ref)
             .pipe(
@@ -42,6 +43,7 @@ export class BotService {
                     for (const routine of routines) {
                         const days = this.utilService.convertDaysToSchedule(routine.dias);
                         const lastDay = moment(_.last(days), 'DD/MM/YYYY');
+                        let index = 1;
 
                         _.pullAll(days, daysException); // Remove the days that are the exception
 
@@ -62,20 +64,35 @@ export class BotService {
                             };
 
                             mealsScheduleGroup.push(
-                                this.restaurantService.scheduleTheMeal(schedule, student).pipe(retry(2))
+                                this.restaurantService.scheduleTheMeal(schedule, student).pipe(
+                                    delay(500*index++),
+                                    retryWhen(errors => {
+                                        let retries = 0;
+                                        return errors.pipe(
+                                            mergeMap(errMsg => {
+                                                if (++retries >= 3) {
+                                                    return throwError('Retry limit exceeded. Error: ' + errMsg)
+                                                }
+                                                console.log(errMsg);
+                                                return errMsg;
+                                            }),
+                                            delay(500),
+                                        )
+                                    })
+                                )
                             )
                         })
                     }
-                    return mealsScheduleGroup[0];
+                    return mealsScheduleGroup;
                 }),
-                // mergeAll()
+                concatAll()
             )
             .subscribe({
                 next: schedule => {
                     console.log(schedule);
                 },
-                error: (err) => {
-                    console.log('EERRROOOW')
+                error: (err: Error) => {
+                    console.log(err)
                 }
             })
     }
