@@ -4,5 +4,12 @@ export interface Schedule {
     refeicao: number | number[],
     matricula: string,
     password: string,
-    session?: string
+    session?: string,
+    status?: ScheduleStatuses
+}
+
+export enum ScheduleStatuses {
+    SCHEDULING,
+    ERROR,
+    SUCCESS
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RequestInit } from 'node-fetch';
-import { from, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, Observable, of, throwError } from 'rxjs';
+import { mergeMap, take } from 'rxjs/operators';
 import { RequestConfig } from './request-config.interface';
 const fetch = require('node-fetch');
 
@@ -30,13 +30,21 @@ export class RequestService {
             method: 'POST',
             headers: requestConfig.headers
         } as RequestInit;
-        
+
         // RequestInit does not allow those:
         // referrerPolicy: 'no-referrer-when-downgrade',
         // mode: 'cors',
         // credentials: 'include'
         // referrer: requestConfig.referrer
 
-        return from<Promise<Response>>(fetch(requestConfig.url, requestInit)).pipe(take(1));
+        return from<Promise<Response>>(fetch(requestConfig.url, requestInit)).pipe(
+            take(1),
+            mergeMap((response) => {
+                if (response.status !== 200) {
+                    return throwError(new Error(`Error on the upstream server. ${response.status}: ${response.statusText}`))
+                }
+                return of(response);
+            })
+        ) as Observable<Response>;
     }
 }

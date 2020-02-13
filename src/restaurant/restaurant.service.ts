@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as queryString from 'querystring';
 import { from, Observable, of, throwError } from 'rxjs';
-import { map, mapTo, mergeMap } from 'rxjs/operators';
+import { map, mapTo, mergeMap, switchMap } from 'rxjs/operators';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { TesseractService } from 'src/tesseract/tesseract.service';
 import { Schedule } from './inferfaces/schedule.interface';
 import { RequestConfig } from './request/request-config.interface';
 import { RequestService } from './request/request.service';
-import fs = require('fs');
 
 @Injectable()
 export class RestaurantService {
@@ -32,7 +31,7 @@ export class RestaurantService {
 			.pipe(
 				map(response => {
 					if (response.url.indexOf('jsessionid') === -1) {
-						throwError(`Error on retaurant-auth for user ${data.j_username}`)
+						throwError(new Error(`Error on retaurant-auth for user ${data.j_username}`))
 					}
 					return response.url.split(';')[1].replace('jsessionid=', '')
 				}),
@@ -49,7 +48,7 @@ export class RestaurantService {
 			'save': ''
 		});
 
-		console.log('AGENDAR REFEICAO', captcha);
+		console.log('Agendando Refeição - CAPTCHA: ', captcha);
 
 		if (Array.isArray(schedule.refeicao)) {
 			for (const refeicao of schedule.refeicao) {
@@ -68,18 +67,12 @@ export class RestaurantService {
 
 		return this.requestService.makeRequest(requestConfig).pipe(
 			mergeMap(res => {
-				if(res.status !== 200) { return throwError('Error on schedule meal'); }
+				if(res.status !== 200) { return throwError(new Error('Error on schedule meal')); }
 
 				return from(res.text()).pipe(
 					mergeMap(html => {
 						if(this.hasErrorOnHtml(html)){
-							fs.writeFile('teste.html', html, function(err) {
-								if(err) {
-									return console.log(err);
-								}
-								console.log("The file was saved!");
-							}); 
-							return throwError('Error on Captcha');
+							return throwError(new Error('Error on Captcha'));
 						}
 						return of(res);
 					})
@@ -95,22 +88,29 @@ export class RestaurantService {
 	}
 
 	scheduleTheMeal(schedule: Schedule, student: StudentWrapper): Observable<Schedule> {
-		console.log('ScheduleTheMeal', schedule.dia)
+		console.log('Agendando para ', schedule.dia)
 		return this.tesseractService.getCaptchaSchedule(schedule.session)
 			.pipe(
-				mergeMap(captcha => this.agendarRefeicao(schedule, captcha)),
+				switchMap(captcha => this.agendarRefeicao(schedule, captcha)),
 				mapTo(schedule)
 			)
 	}
 
-	logOut(session: string): Observable<Response> {
+	logOut(session: string): void {
 		const headers = [['Cookie', session]];
 		const requestConfig: RequestConfig = {
 			headers,
 			url: 'https://portal.ufsm.br/ru/logout.html',
 			referrer: '',
 		}
-		return this.requestService.makeRequest(requestConfig);
+		this.requestService.makeRequest(requestConfig).subscribe(
+			() => {
+				console.log('Sucesso ao fazer logout');
+			},
+			() => {
+				console.log('Erro ao fazer login');
+			}
+		);
 	}
 
 }

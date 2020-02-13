@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Moment } from 'moment';
-import { Observable, throwError } from 'rxjs';
-import { concatAll, delay, mergeMap, retryWhen } from 'rxjs/operators';
+import { concat, interval, Observable, of, throwError } from 'rxjs';
+import { catchError, delay, mergeMap, retryWhen, take } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
-import { Schedule } from 'src/restaurant/inferfaces/schedule.interface';
+import { Schedule, ScheduleStatuses } from 'src/restaurant/inferfaces/schedule.interface';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { RoutineWrapper } from 'src/shared/routine-wrapper.interface';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
@@ -25,7 +25,6 @@ export class BotService {
     }
 
     prepareScheduleForStudent(student: StudentWrapper, daysException: any[] = []) {
-        console.log('PrepareScheduleForStudent');
         let routines: RoutineWrapper[] = [];
         this.dbService.getStudentRoutines(student.ref)
             .pipe(
@@ -43,7 +42,6 @@ export class BotService {
                     for (const routine of routines) {
                         const days = this.utilService.convertDaysToSchedule(routine.dias);
                         const lastDay = moment(_.last(days), 'DD/MM/YYYY');
-                        let index = 1;
 
                         _.pullAll(days, daysException); // Remove the days that are the exception
 
@@ -60,39 +58,54 @@ export class BotService {
                                 refeicao: routine.tiposRefeicao,
                                 matricula: student.matricula,
                                 password: student.password,
-                                session
+                                session,
+                                status: ScheduleStatuses.SCHEDULING
                             };
 
                             mealsScheduleGroup.push(
-                                this.restaurantService.scheduleTheMeal(schedule, student).pipe(
-                                    delay(500*index++),
-                                    retryWhen(errors => {
-                                        let retries = 0;
-                                        return errors.pipe(
-                                            mergeMap(errMsg => {
-                                                if (++retries >= 3) {
-                                                    return throwError('Retry limit exceeded. Error: ' + errMsg)
-                                                }
-                                                console.log(errMsg);
-                                                return errMsg;
-                                            }),
-                                            delay(500),
-                                        )
-                                    })
+                                interval(500).pipe(
+                                    take(1),
+                                    mergeMap( () =>
+                                        this.restaurantService.scheduleTheMeal(schedule, student)
+                                            .pipe(
+                                                retryWhen(errors => {
+                                                    let retries = 0;
+                                                    return errors.pipe(
+                                                        mergeMap(errMsg => {
+                                                            if (++retries >= 3) {
+                                                                return throwError(new Error('Retry limit exceeded. Error: ' + errMsg))
+                                                            }
+                                                            return errMsg;
+                                                        }),
+                                                        delay(500),
+                                                    )
+                                                }),
+                                                catchError((err) => {
+                                                    console.log(err);
+                                                    schedule.status = ScheduleStatuses.ERROR;
+                                                    return of(schedule)
+                                                })
+                                            )
+                                    )
                                 )
                             )
                         })
                     }
-                    return mealsScheduleGroup;
+
+                    return concat(...mealsScheduleGroup);
                 }),
-                concatAll()
             )
             .subscribe({
                 next: schedule => {
-                    console.log(schedule);
+                    if(schedule.status === ScheduleStatuses.ERROR){
+                        console.log('Schedule Error', schedule.dia)
+                    } else {
+                        console.log('Schedle Sucess', schedule.dia)
+                    }
+                    this.restaurantService.logOut(schedule.session);
                 },
                 error: (err: Error) => {
-                    console.log(err)
+                    console.log(err.message)
                 }
             })
     }
