@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Moment } from 'moment';
-import { concat, interval, Observable, of, throwError } from 'rxjs';
-import { catchError, delay, mergeMap, retryWhen, take } from 'rxjs/operators';
+import { concat, Observable, of, throwError, timer } from 'rxjs';
+import { catchError, delay, mergeMap, retryWhen } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
 import { Schedule, ScheduleStatuses } from 'src/restaurant/inferfaces/schedule.interface';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
@@ -33,7 +33,7 @@ export class BotService {
                         routines = routinesStudent;
                         return this.restaurantService.auth(student.matricula, student.password)
                     } else {
-                        throw new Error('No routine found');
+                        return throwError('No routine found');
                     }
                 }),
                 mergeMap(session => {
@@ -63,8 +63,7 @@ export class BotService {
                             };
 
                             mealsScheduleGroup.push(
-                                interval(500).pipe(
-                                    take(1),
+                                timer(0).pipe(// I could use the scheduleMeal here, but I dont want it to be called
                                     mergeMap( () =>
                                         this.restaurantService.scheduleTheMeal(schedule, student)
                                             .pipe(
@@ -73,7 +72,7 @@ export class BotService {
                                                     return errors.pipe(
                                                         mergeMap(errMsg => {
                                                             if (++retries >= 3) {
-                                                                return throwError(new Error('Retry limit exceeded. Error: ' + errMsg))
+                                                                return throwError('Retry limit exceeded. Error: ' + errMsg)
                                                             }
                                                             return errMsg;
                                                         }),
@@ -91,7 +90,6 @@ export class BotService {
                             )
                         })
                     }
-
                     return concat(...mealsScheduleGroup);
                 }),
             )
@@ -104,8 +102,8 @@ export class BotService {
                     }
                     this.restaurantService.logOut(schedule.session);
                 },
-                error: (err: Error) => {
-                    console.log(err.message)
+                error: (err) => {
+                    console.log(err)
                 }
             })
     }
