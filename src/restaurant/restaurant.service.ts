@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as queryString from 'querystring';
 import { from, Observable, of, throwError } from 'rxjs';
-import { map, mapTo, mergeMap, switchMap } from 'rxjs/operators';
+import { mapTo, mergeMap, switchMap } from 'rxjs/operators';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { TesseractService } from 'src/tesseract/tesseract.service';
 import { Schedule } from './inferfaces/schedule.interface';
@@ -29,11 +29,11 @@ export class RestaurantService {
 		};
 		return this.requestService.makeRequest(requestConfig)
 			.pipe(
-				map(response => {
+				mergeMap(response => {
 					if (response.url.indexOf('jsessionid') === -1) {
-						throwError(new Error(`Error on retaurant-auth for user ${data.j_username}`))
+						return throwError(`Error on retaurant-auth for user ${data.j_username}`)
 					}
-					return response.url.split(';')[1].replace('jsessionid=', '')
+					return of(response.url.split(';')[1].replace('jsessionid=', ''))
 				}),
 			);
 	}
@@ -67,12 +67,12 @@ export class RestaurantService {
 
 		return this.requestService.makeRequest(requestConfig).pipe(
 			mergeMap(res => {
-				if(res.status !== 200) { return throwError(new Error('Error on schedule meal')); }
+				if(res.status !== 200) { return throwError('Error on schedule meal'); }
 
 				return from(res.text()).pipe(
 					mergeMap(html => {
-						if(this.hasErrorOnHtml(html)){
-							return throwError(new Error('Error on Captcha'));
+						if(this.hasErrorOnHtml(html)) {
+							return throwError('Error on Captcha');
 						}
 						return of(res);
 					})
@@ -83,12 +83,17 @@ export class RestaurantService {
 
 	private hasErrorOnHtml(html: string){
 		const captchaReg = new RegExp(/<span class="success pill"/g);
+		const scheduledAlready = new RegExp(/Já existe um agendamento com estes dados/g);
 		const innerHTML = html.match(captchaReg);
-		return innerHTML === null; // Meaning that we dont have success
+		const alreadyExist = html.match(scheduledAlready);;
+		if(innerHTML === null && alreadyExist != null) {
+			return true;
+		}
+		return false;
 	}
 
 	scheduleTheMeal(schedule: Schedule, student: StudentWrapper): Observable<Schedule> {
-		console.log('Agendando para ', schedule.dia)
+		console.log(`Agendando para ${schedule.matricula}: ${schedule.dia}`);
 		return this.tesseractService.getCaptchaSchedule(schedule.session)
 			.pipe(
 				switchMap(captcha => this.agendarRefeicao(schedule, captcha)),
