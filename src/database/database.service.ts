@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, take } from 'rxjs/operators';
+import { Schedule } from 'src/restaurant/inferfaces/schedule.interface';
 import { RoutineWrapper } from 'src/shared/routine-wrapper.interface';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { Student } from 'src/shared/student.interface';
@@ -31,7 +32,7 @@ export class DatabaseService {
                 .get()
         ).pipe(
             mergeMap(querySnapshot => {
-                if (querySnapshot.empty){//User does not exist
+                if (querySnapshot.empty) {//User does not exist
                     return from(this.firestore.collection('estudantes').add({
                         matricula,
                         password: encryptedPassword,
@@ -41,8 +42,8 @@ export class DatabaseService {
                 }
 
                 const studentData: Student = querySnapshot.docs[0].data() as Student;
-                if(studentData.password !== password){
-                    querySnapshot.docs[0].ref.update({password: encryptedPassword} as Student) 
+                if (studentData.password !== password) {
+                    querySnapshot.docs[0].ref.update({ password: encryptedPassword } as Student)
                 }
                 return of(querySnapshot.docs[0].ref)
             })
@@ -86,9 +87,9 @@ export class DatabaseService {
                 querySnapshot.forEach((doc) => {
                     const student = doc.data();
                     studentsToSchedule.push({
-                      ref: doc.ref,
-                      matricula: student.matricula,
-                      password: this.decrypt(student.password)
+                        ref: doc.ref,
+                        matricula: student.matricula,
+                        password: this.decrypt(student.password)
                     });
                 })
 
@@ -105,9 +106,9 @@ export class DatabaseService {
                 querySnapshot.forEach((doc) => {
                     const student = doc.data();
                     studentsToSchedule.push({
-                      ref: doc.ref,
-                      matricula: student.matricula,
-                      password: this.decrypt(student.password)
+                        ref: doc.ref,
+                        matricula: student.matricula,
+                        password: this.decrypt(student.password)
                     });
                 })
 
@@ -118,18 +119,36 @@ export class DatabaseService {
 
     getStudentRoutines(studentRef: DocumentReference): Observable<RoutineWrapper[]> {
         return from(studentRef.collection('rotinas').get()).pipe(
-            map( querySnapshot => {
+            map(querySnapshot => {
                 const routines: RoutineWrapper[] = [];
                 querySnapshot.forEach((doc) => {
-                const routine: RoutineWrapper = {
-                    ...doc.data() as RoutineWrapper
-                };
-                routine.ref = doc.ref;
-                routines.push(routine as RoutineWrapper)
+                    const routine: RoutineWrapper = {
+                        ...doc.data() as RoutineWrapper
+                    };
+                    routine.ref = doc.ref;
+                    routines.push(routine as RoutineWrapper)
                 })
                 return routines;
             })
         )
+    }
+
+    async saveError(student: DocumentReference, schedule: Schedule) {
+        delete schedule.session;
+        delete schedule.status;
+
+        schedule.password = this.encrypt(schedule.password);
+        try {
+            await this.firestore.collection('errors').add({
+                resolved: false,
+                estudante: student.path,
+                schedule
+            })
+
+            console.log(`Erro salvo - ${schedule.matricula}`)
+        } catch (e) {
+            console.log(`Erro ao salvar o erro - ${schedule.matricula}: ${e}`);
+        }
     }
 
     encrypt(text: string) {
