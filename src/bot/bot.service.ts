@@ -95,7 +95,8 @@ export class BotService {
             )
             .subscribe({
                 next: schedule => {
-                    if(schedule.status === ScheduleStatuses.ERROR){
+                    if(schedule.status === ScheduleStatuses.ERROR) {
+                        this.dbService.saveError(student.ref, schedule);
                         console.log('Schedule Error', schedule.dia)
                     } else {
                         console.log('Schedle Sucess', schedule.dia)
