@@ -15,7 +15,7 @@ export class BotController {
 
     @Get('schedule')
     scheduleEveryone() {
-        this.dbService.getStudentsToSchedule(this.configService.get<number>('LIMIT_USERS'))
+        this.dbService.getStudentsToSchedule(parseInt(this.configService.get<string>('LIMIT_USERS'), 10))
             .subscribe((students: StudentWrapper[]) => {
                 for (const student of students) {
                     this.botService.prepareScheduleForStudent(student);
