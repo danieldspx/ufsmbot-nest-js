@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class AuthService {
         return this.dbService.getStudentByMatricula(matricula)
         .pipe(
             map(student => student.ref.path),
-            map((refPath) => admin.auth().createCustomToken(refPath, {matricula})),
+            mergeMap(refPath => admin.auth().createCustomToken(refPath, {matricula})),
             map((token) => ({token, message: 'sucess'}))
         )
     }
