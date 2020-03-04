@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "paths": { "@app/*": ["src/ufsmbot-ng/src/app/*"], "@src/*": ["src/ufsmbot-ng/src/*"] },
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
