@@ -29,7 +29,7 @@ export class RestaurantService {
 			.pipe(
 				mergeMap(response => {
 					if (response.url.indexOf('jsessionid') === -1) {
-						return throwError(`Error on retaurant-auth for user ${data.j_username}`)
+						return throwError(`Error on restaurant-auth for user ${data.j_username}`)
 					}
 					return of(response.url.split(';')[1].replace('jsessionid=', ''))
 				}),
