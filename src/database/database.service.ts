@@ -135,6 +135,10 @@ export class DatabaseService {
         )
     }
 
+    updateLastSchedule(lastSchedule: Date, studentRef: DocumentReference){
+        studentRef.update({lastSchedule} as Student);
+    }
+
     async saveError(student: DocumentReference, schedule: Schedule) {
         delete schedule.session;
         delete schedule.status;

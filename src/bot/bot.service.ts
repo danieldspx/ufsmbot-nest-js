@@ -8,7 +8,6 @@ import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { RoutineWrapper } from 'src/shared/routine-wrapper.interface';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { UtilService } from 'src/shared/util/util.service';
-import { isUndefined } from 'util';
 import moment = require('moment');
 import _ = require('lodash');
 
@@ -45,9 +44,7 @@ export class BotService {
 
                         _.pullAll(days, daysException); // Remove the days that are the exception
 
-                        if (isUndefined(lastSchedule)) {// This will problably never happen, but leave it there...just in case
-                            lastSchedule = lastDay;
-                        } else if (lastSchedule.isBefore(lastDay)) {
+                        if (lastSchedule.isBefore(lastDay)) {
                             lastSchedule = lastDay;
                         }
 
@@ -86,6 +83,7 @@ export class BotService {
                             )
                         })
                     }
+                    this.dbService.updateLastSchedule(lastSchedule.toDate(), student.ref);
                     return concat(...mealsScheduleGroup);
                 }),
             )
