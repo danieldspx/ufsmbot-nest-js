@@ -1,5 +1,5 @@
 import { DocumentReference } from '@google-cloud/firestore';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
@@ -11,7 +11,9 @@ import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { Student } from 'src/shared/student.interface';
 import { UtilService } from 'src/shared/util/util.service';
 
-@Injectable()
+@Injectable({
+    scope: Scope.DEFAULT
+})
 export class DatabaseService {
     firestore: FirebaseFirestore.Firestore;
 
