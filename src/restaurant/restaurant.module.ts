@@ -10,6 +10,6 @@ import { RestaurantService } from './restaurant.service';
   imports: [ConfigModule.forRoot(), DatabaseModule],
   controllers: [RestaurantController],
   providers: [RestaurantService, RequestService, TesseractService],
-  exports: [RestaurantService, RequestService, TesseractService]
+  exports: [RestaurantService]
 })
 export class RestaurantModule {}
