@@ -1,10 +1,6 @@
 import { DynamicModule, Inject, Module, OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import {
-  ANGULAR_MODULE_OPTIONS,
-  DEFAULT_RENDER_PATH,
-  DEFAULT_ROOT_PATH,
-} from './angular.constants';
+import { ANGULAR_MODULE_OPTIONS, DEFAULT_RENDER_PATH, DEFAULT_ROOT_PATH } from './angular.constants';
 import { angularProviders } from './angular.providers';
 import { AngularModuleOptions } from './interfaces/angular-options.interface';
 import { AbstractLoader } from './loaders/abstract.loader';
@@ -23,6 +19,7 @@ export class AngularModule implements OnModuleInit {
   public static forRoot(options: AngularModuleOptions = {}): DynamicModule {
     options.rootPath = options.rootPath || DEFAULT_ROOT_PATH;
     options.renderPath = options.renderPath || DEFAULT_RENDER_PATH;
+    // console.log('OIIIII ', __dirname, options.rootPath)
     return {
       module: AngularModule,
       providers: [

@@ -9,7 +9,8 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 
 @Module({
   imports: [RestaurantModule, ConfigModule.forRoot(), BotModule, AuthModule, AngularModule.forRoot({
-      rootPath: 'ufsmbot-ng/dist/ufsmbot-ng'
+      rootPath: 'dist/client-ng',
+      renderPath: '/app/*'
     })],
   controllers: [AppController],
   providers: [AppService]
