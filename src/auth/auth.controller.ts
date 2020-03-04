@@ -16,6 +16,5 @@ export class AuthController {
         return this.restaurantService.auth(body.matricula, body.password).pipe(
             mergeMap(() => this.authService.getCustomToken(body.matricula))
         );
-        // return this.authService.getCustomToken(body.matricula)
     }
 }
