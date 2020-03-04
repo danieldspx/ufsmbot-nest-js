@@ -1,6 +1,7 @@
 export interface Student {
     matricula?: string;
     password?: string;
+    isFriend?: boolean;
     lastSchedule?: Date;
     lastHistoryCheck?: Date;
     banCount?: number;
