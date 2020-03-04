@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as queryString from 'querystring';
 import { from, Observable, of, throwError } from 'rxjs';
 import { mapTo, mergeMap, switchMap } from 'rxjs/operators';
@@ -12,7 +11,6 @@ import { RequestService } from './request/request.service';
 @Injectable()
 export class RestaurantService {
 	constructor(
-		private readonly configService: ConfigService,
 		private readonly requestService: RequestService,
 		private readonly tesseractService: TesseractService
 	) { }
