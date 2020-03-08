@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build && cd ../ufsmbot-angular && ng build --prod",
+    "build": "(nest build && cd ../ufsmbot-angular && ng build --prod) || echo 'No build avaiable'",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
