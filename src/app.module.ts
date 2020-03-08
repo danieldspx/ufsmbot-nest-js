@@ -9,8 +9,7 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 
 @Module({
   imports: [RestaurantModule, ConfigModule.forRoot(), BotModule, AuthModule, AngularModule.forRoot({
-      rootPath: 'dist/client-ng',
-      renderPath: '/app/*'
+      rootPath: 'dist/client-ng'
     })],
   controllers: [AppController],
   providers: [AppService]
