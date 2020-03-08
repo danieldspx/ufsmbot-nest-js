@@ -1,0 +1,1 @@
+{"version":3,"file":"abstract.loader.js","sourceRoot":"","sources":["../../../src/angular/loaders/abstract.loader.ts"],"names":[],"mappings":";;;;;;;;AAAA,2CAA4C;AAE5C,+BAA4B;AAI5B,IAAsB,cAAc,GAApC,MAAsB,cAAc;IAM3B,gBAAgB,CAAC,UAAkB;QACxC,OAAO,WAAI,CAAC,UAAU,EAAE,YAAY,CAAC,CAAC;IACxC,CAAC;CACF,CAAA;AATqB,cAAc;IADnC,mBAAU,EAAE;GACS,cAAc,CASnC;AATqB,wCAAc"}
