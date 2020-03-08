@@ -25,7 +25,6 @@ export class BotController {
 
     @Get('schedule/:matricula')
     scheduleForStudent(@Param() params){
-        // TODO: Talvez essa rota deveria pedir o password tbm
         return this.botService.scheduleForStudent(params.matricula);
     }
 }
