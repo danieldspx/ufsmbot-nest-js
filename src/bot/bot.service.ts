@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Moment } from 'moment';
-import { concat, defer, Observable, of, throwError } from 'rxjs';
-import { catchError, delay, mergeMap, retryWhen } from 'rxjs/operators';
+import { concat, defer, Observable, of, throwError, timer } from 'rxjs';
+import { catchError, delay, mergeMap, retryWhen, tap } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
 import { Schedule, ScheduleStatuses } from 'src/restaurant/inferfaces/schedule.interface';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
@@ -60,24 +60,29 @@ export class BotService {
                             };
 
                             mealsScheduleGroup.push(
-                                defer(() => this.restaurantService.scheduleTheMeal(schedule, student)).pipe(
-                                    retryWhen(errors => {
-                                        let retries = 0;
-                                        return errors.pipe(
-                                            mergeMap(errMsg => {
-                                                if (++retries >= 3) {
-                                                    return throwError('Retry limit exceeded. Error: ' + errMsg)
-                                                }
-                                                return errMsg;
-                                            }),
-                                            delay(500),
-                                        )
-                                    }),
-                                    catchError((err) => {
-                                        console.log(err);
-                                        schedule.status = ScheduleStatuses.ERROR;
-                                        return of(schedule)
-                                    }),
+                                timer(0).pipe(// I could use the scheduleMeal here, but I dont want it to be called (defer does not work properly)
+                                    mergeMap( () =>
+                                        this.restaurantService.scheduleTheMeal(schedule, student)
+                                            .pipe(
+                                                retryWhen(errors => {
+                                                    let retries = 0;
+                                                    return errors.pipe(
+                                                        mergeMap(errMsg => {
+                                                            if (++retries >= 6) {
+                                                                return throwError('Retry limit exceeded. Error: ' + errMsg)
+                                                            }
+                                                            return errMsg;
+                                                        }),
+                                                        delay(500),
+                                                    )
+                                                }),
+                                                catchError((err) => {
+                                                    console.log(err);
+                                                    schedule.status = ScheduleStatuses.ERROR;
+                                                    return of(schedule)
+                                                })
+                                            )
+                                    ),
                                     delay(500)
                                 )
                             )

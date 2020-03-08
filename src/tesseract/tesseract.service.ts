@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as download from 'image-downloader';
-import { from, interval, Observable } from 'rxjs';
+import { from, interval, Observable, defer } from 'rxjs';
 import { map, mergeMap, take } from 'rxjs/operators';
 import { createWorker, PSM } from 'tesseract.js';
 
@@ -43,10 +43,8 @@ export class TesseractService {
     }
 
     getCaptchaSchedule(session: string): Observable<string> {
-        return interval(500).pipe(
-            take(1),
-            mergeMap(() => this.downloadCaptchaImage(session)),
-            mergeMap(filepath => this.recognizeCaptcha(filepath))
+        return defer(() => this.downloadCaptchaImage(session)).pipe(
+            mergeMap(filepath => this.recognizeCaptcha(filepath as string))
         )
     }
 }

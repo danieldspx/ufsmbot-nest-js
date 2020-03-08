@@ -82,9 +82,11 @@ export class RestaurantService {
 	private hasErrorOnHtml(html: string){
 		const captchaReg = new RegExp(/<span class="success pill"/g);
 		const scheduledAlready = new RegExp(/Já existe um agendamento com estes dados/g);
-		const innerHTML = html.match(captchaReg);
-		const alreadyExist = html.match(scheduledAlready);;
-		if(innerHTML === null && alreadyExist != null) {
+		const invalidField = new RegExp(/Campo inválido/g);
+		const hasSuccess = html.match(captchaReg);
+		const alreadyExist = html.match(scheduledAlready);
+		const errorCaptcha = html.match(invalidField);
+		if(hasSuccess === null || alreadyExist != null || errorCaptcha != null) {
 			return true;
 		}
 		return false;
