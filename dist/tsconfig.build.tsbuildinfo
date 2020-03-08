@@ -1978,7 +1978,7 @@
         "signature": "b82491e2990291580288c5602d4c017238977749d52b17391f0e45d9a29be644"
       },
       "../src/main.ts": {
-        "version": "2e0e7bc46bcb02712984d12dee2b777a7ce02ea100a201a5722764c3b7a25723",
+        "version": "9a753926ce67069f23956e94dfef64fe62d86f24b154b97b0f3e505d1e32b318",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../node_modules/@types/anymatch/index.d.ts": {
