@@ -32,30 +32,31 @@ let DatabaseService = class DatabaseService {
     }
     getStudentByCredentials(matricula, password) {
         const encryptedPassword = this.encrypt(password);
-        return rxjs_1.from(this.firestore.collection('estudantes')
+        return rxjs_1.defer(() => this.firestore.collection('estudantes')
             .where('matricula', '==', matricula)
             .limit(1)
-            .get()).pipe(operators_1.mergeMap(querySnapshot => {
+            .get()).pipe(operators_1.switchMap(async (querySnapshot) => {
             if (querySnapshot.empty) {
-                return rxjs_1.from(this.firestore.collection('estudantes').add({
+                return this.firestore.collection('estudantes').add({
                     matricula,
                     password: encryptedPassword,
                     lastSchedule: null,
                     lastHistoryCheck: null,
-                }));
+                    isFriend: false
+                });
             }
             const studentData = querySnapshot.docs[0].data();
             if (studentData.password !== password) {
-                querySnapshot.docs[0].ref.update({ password: encryptedPassword });
+                await querySnapshot.docs[0].ref.update({ password: encryptedPassword });
             }
-            return rxjs_1.of(querySnapshot.docs[0].ref);
+            return querySnapshot.docs[0].ref;
         }));
     }
     getStudentByMatricula(matricula) {
-        return rxjs_1.from(this.firestore.collection('estudantes')
+        return rxjs_1.defer(() => this.firestore.collection('estudantes')
             .where('matricula', '==', matricula)
             .limit(1)
-            .get()).pipe(operators_1.mergeMap(querySnapshot => {
+            .get()).pipe(operators_1.switchMap(querySnapshot => {
             const studentData = querySnapshot.docs[0].data();
             const studentWrap = {
                 matricula,
@@ -63,7 +64,7 @@ let DatabaseService = class DatabaseService {
                 ref: querySnapshot.docs[0].ref
             };
             return rxjs_1.of(studentWrap);
-        }), operators_1.take(1));
+        }));
     }
     getStudentsToSchedule(limit, offset = 0) {
         const studentsToSchedule = [];
@@ -144,9 +145,7 @@ let DatabaseService = class DatabaseService {
     }
 };
 DatabaseService = __decorate([
-    common_1.Injectable({
-        scope: common_1.Scope.DEFAULT
-    }),
+    common_1.Injectable(),
     __metadata("design:paramtypes", [config_1.ConfigService, util_service_1.UtilService])
 ], DatabaseService);
 exports.DatabaseService = DatabaseService;

@@ -34,7 +34,7 @@ let TesseractService = class TesseractService {
         await worker.loadLanguage('por');
         await worker.initialize('por');
         await worker.setParameters({
-            tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXIZ',
+            tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             tessedit_pageseg_mode: "8"
         });
         const result = await worker.recognize(filepath);

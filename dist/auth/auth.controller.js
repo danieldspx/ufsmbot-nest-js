@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
+const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const restaurant_service_1 = require("../restaurant/restaurant.service");
 const auth_service_1 = require("./auth.service");
@@ -22,7 +23,8 @@ let AuthController = class AuthController {
         this.restaurantService = restaurantService;
     }
     login(body) {
-        return this.restaurantService.auth(body.matricula, body.password).pipe(operators_1.mergeMap(() => this.authService.getCustomToken(body.matricula)));
+        const { matricula, password } = body;
+        return this.restaurantService.auth(matricula, password).pipe(operators_1.switchMap(session => this.restaurantService.getStudentNameAndCourse(matricula, session).pipe(operators_1.catchError(() => rxjs_1.of(undefined)))), operators_1.switchMap(studentInfo => this.authService.getCustomToken(matricula, password, studentInfo)));
     }
 };
 __decorate([

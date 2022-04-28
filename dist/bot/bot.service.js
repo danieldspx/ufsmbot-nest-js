@@ -20,6 +20,7 @@ const student_wrapper_interface_1 = require("../shared/student-wrapper.interface
 const util_service_1 = require("../shared/util/util.service");
 const moment = require("moment");
 const _ = require("lodash");
+const schedule_exception_1 = require("../shared/schedule.exception");
 let BotService = class BotService {
     constructor(dbService, restaurantService, utilService) {
         this.dbService = dbService;
@@ -46,6 +47,7 @@ let BotService = class BotService {
             for (const routine of routines) {
                 const days = this.utilService.convertDaysToSchedule(routine.dias);
                 const lastDay = moment(_.last(days), 'DD/MM/YYYY');
+                console.log('Will try to schedule', days);
                 _.pullAll(days, daysException);
                 if (lastSchedule.isBefore(lastDay)) {
                     lastSchedule = lastDay;
@@ -63,15 +65,20 @@ let BotService = class BotService {
                     mealsScheduleGroup.push(rxjs_1.timer(0).pipe(operators_1.mergeMap(() => this.restaurantService.scheduleTheMeal(schedule, student)
                         .pipe(operators_1.retryWhen(errors => {
                         let retries = 0;
-                        return errors.pipe(operators_1.mergeMap(errMsg => {
-                            if (++retries >= 6) {
-                                return rxjs_1.throwError('Retry limit exceeded. Error: ' + errMsg);
+                        return errors.pipe(operators_1.mergeMap(err => {
+                            if (++retries >= 6 ||
+                                (typeof err === 'object' && err.code === schedule_exception_1.ScheduleExceptionType.NON_RETRIABLE)) {
+                                console.error('Retry limit exceeded or cannot be retried. Error: ' + err);
+                                return rxjs_1.throwError(err);
                             }
-                            return errMsg;
+                            return err;
                         }), operators_1.delay(500));
                     }), operators_1.catchError((err) => {
-                        console.log(err);
-                        schedule.status = schedule_interface_1.ScheduleStatuses.ERROR;
+                        let status = schedule_interface_1.ScheduleStatuses.ERROR;
+                        if (typeof err === 'object' && err.code === schedule_exception_1.ScheduleExceptionType.NON_RETRIABLE) {
+                            status = schedule_interface_1.ScheduleStatuses.CANNOT_SCHEDULE;
+                        }
+                        schedule.status = status;
                         return rxjs_1.of(schedule);
                     }))), operators_1.delay(500)));
                 });
@@ -81,13 +88,15 @@ let BotService = class BotService {
         }))
             .subscribe({
             next: schedule => {
+                let logMessage = '[SCHEDULE_SUCCESS]';
                 if (schedule.status === schedule_interface_1.ScheduleStatuses.ERROR) {
                     this.dbService.saveError(student.ref, schedule);
-                    console.log('Schedule Error', schedule.dia);
+                    logMessage = '[SCHEDULE_ERROR]';
                 }
-                else {
-                    console.log('Schedle Sucess', schedule.dia);
+                else if (schedule.status === schedule_interface_1.ScheduleStatuses.CANNOT_SCHEDULE) {
+                    logMessage = '[CANNOT_SCHEDULE]';
                 }
+                console.log(`${logMessage} - Matricula: ${schedule.matricula} Schedule Attempt: ${schedule.dia}`);
                 this.restaurantService.logOut(schedule.session);
             },
             error: (err) => {

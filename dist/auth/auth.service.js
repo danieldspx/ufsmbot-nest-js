@@ -13,13 +13,19 @@ const common_1 = require("@nestjs/common");
 const admin = require("firebase-admin");
 const operators_1 = require("rxjs/operators");
 const database_service_1 = require("../database/database.service");
+const student_interface_1 = require("../shared/student.interface");
 let AuthService = class AuthService {
     constructor(dbService) {
         this.dbService = dbService;
     }
-    getCustomToken(matricula) {
-        return this.dbService.getStudentByMatricula(matricula)
-            .pipe(operators_1.map(student => student.ref.path), operators_1.mergeMap(refPath => admin.auth().createCustomToken(refPath, { matricula })), operators_1.map((token) => ({ token, message: 'sucess' })));
+    getCustomToken(matricula, password, studentInfo) {
+        return this.dbService.getStudentByCredentials(matricula, password)
+            .pipe(operators_1.switchMap(async (studentRef) => {
+            if (studentInfo && studentInfo.curso && studentInfo.nome) {
+                await studentRef.update({ curso: studentInfo.curso, nome: studentInfo.nome });
+            }
+            return studentRef;
+        }), operators_1.switchMap(studentRef => admin.auth().createCustomToken(studentRef.path, { matricula })), operators_1.map((token) => ({ token, message: 'sucess' })));
     }
 };
 AuthService = __decorate([

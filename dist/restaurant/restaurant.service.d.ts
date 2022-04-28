@@ -9,7 +9,10 @@ export declare class RestaurantService {
     constructor(requestService: RequestService, tesseractService: TesseractService);
     auth(matricula: string, password: string): Observable<string>;
     agendarRefeicao(schedule: Schedule, captcha: string): Observable<Response | never>;
-    private hasErrorOnHtml;
+    private throwIfErrorOnHTML;
     scheduleTheMeal(schedule: Schedule, student: StudentWrapper): Observable<Schedule>;
     logOut(session: string): void;
+    getStudentNameAndCourse(matricula: string, session: string): Observable<any>;
+    private unscapeUnicode;
+    private getProperty;
 }

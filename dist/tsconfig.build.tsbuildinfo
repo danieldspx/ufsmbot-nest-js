@@ -1890,8 +1890,8 @@
         "signature": "8548a1a83c1091e8c7a355b7edf031854b007d10a7fa24e180a95d608c87704e"
       },
       "../src/restaurant/inferfaces/schedule.interface.ts": {
-        "version": "913fde1b86c1897141f37ae3d8f3219283847d7ec01a3ee6a16db9525cf10d2e",
-        "signature": "040c3f074c475fd53c1547801833472084cc4c9c3609f84add2353b019303989"
+        "version": "50b74702a22c523d7c0197ada02d28c3ec0209bf31da6388619d99a4ef996eea",
+        "signature": "4857ef5a8ee7b8f8b66844264c96248bfc6d9f8d6dc51bc378289a085198bf01"
       },
       "../src/shared/routine-wrapper.interface.ts": {
         "version": "810d18310ced77ed87e5094322182fb41ce78306b6c2ca293f4e670e1eba0438",
@@ -1906,7 +1906,7 @@
         "signature": "503faeac20de08d13b2a7421615f3f2d3018251f311de0c0a790457fabf2eb55"
       },
       "../src/database/database.service.ts": {
-        "version": "2eb7927735e2d0aa4cced94a3ef9ef87d0c886aa9cf45655785055f95a0a51fa",
+        "version": "037f24ae9f6010f1865cc545313a60da53d8d7ca3027de7b12948ad3678b93a1",
         "signature": "649019ffa8d2a0ba8346b3e0847df04f3608af24563ea4b7acf4321a2da58520"
       },
       "../src/database/database.module.ts": {
@@ -1918,7 +1918,7 @@
         "signature": "df86ba13948dcd848dbaa53614def3f5e683179496b2f4557c4273ade061b2a9"
       },
       "../src/tesseract/tesseract.service.ts": {
-        "version": "0efec3eb1228b325edecdae89df4ccca533b73f9194458034c0688f61b8b0988",
+        "version": "a71bb35e6f37804102e68519e909fd09ed63f771b92d25a704ddc6b7c851b5da",
         "signature": "014ae495e63eed118b2dc79998af310f9189d087b0f6c83110c2fb52eaa133e8"
       },
       "../node_modules/@types/node-fetch/externals.d.ts": {
@@ -1937,9 +1937,13 @@
         "version": "3ac6e123485bf108dca9a04ab7048d5a7ccd53b76ea93573efdb2c4ce2f7224e",
         "signature": "64f16e129f4108d59a3f94717cba12cbf97b062cbf44af4bfb6e2aaa93825197"
       },
+      "../src/shared/schedule.exception.ts": {
+        "version": "340a6a066a5bf5b5d0f923d1f4a30378b7bea78d0b956e87106e5e55e1574cd0",
+        "signature": "052c94d9e9972de4058e3e14ecc390b900934af64a1bc69a82fc3ae8e8b94b7b"
+      },
       "../src/restaurant/restaurant.service.ts": {
-        "version": "9c6d1866bc0545c9e91058e6fb965baff9ddbb8e187159eac298f8f6166fbb67",
-        "signature": "1cfcad1cc3910d9492686d8fb15b5740b98a85ddf06f0df1469be6932cc45fbe"
+        "version": "e2c51351e4a45013634188ce50997b458fb4d622417da87f8a0ec8a2da6e0cc3",
+        "signature": "26788213320618f7109350c3f6055ad36e1ba0963445646b1701024e8868da06"
       },
       "../src/restaurant/restaurant.controller.ts": {
         "version": "3466f544bca88a477f7c67a76c48b3e49f4162d7f87b70fc706700bf0bf7e7be",
@@ -1950,11 +1954,11 @@
         "signature": "2b21b89dda41b0e0fc6bda5329ef27447e9e4f1b35dc4da813d13229f2071fa5"
       },
       "../src/auth/auth.service.ts": {
-        "version": "2b26f46cf8443ad87f2afcd82f542be3c72854624bca8bb9e57cef040a4823b5",
-        "signature": "2b4f36bee392b1bef20b816667cb9f5933ee31db0e157944e65d28c79569c537"
+        "version": "817a13fff7349b8c25be7b315257a3dace06eb47f20f67d16b2a3ae2bba2d947",
+        "signature": "7312bc19b82c256ec89bdf437522be4ce6e3d8dece99bffd487640b55ead4889"
       },
       "../src/auth/auth.controller.ts": {
-        "version": "16ba9b02880edf4813beb0c1052c18d2d9d96a0ef540febc5d72e01d2a3987e2",
+        "version": "31f278310dfce5efccaad0788598cbca1cfeda413e37b68099f07f229ac6413b",
         "signature": "8e118e345f9c592d30a9719121b22a2a186c33c475786e408c6964b177327c99"
       },
       "../src/auth/auth.module.ts": {
@@ -1962,7 +1966,7 @@
         "signature": "a28b5c0c372fb375910b3fe3c3ce4331509bc18ccef7cc39c9ee9d8daf8225d1"
       },
       "../src/bot/bot.service.ts": {
-        "version": "60a7d968a14a183b7b3bf2f8175b775053019f07ebfbb7ec298db12edee0be3c",
+        "version": "ab16979bc3f1d98322326d632deece1a7c47d759275192c59e1f5dca64250792",
         "signature": "b5280694fb137a9a6daa37b9f7fe493e908b4b128122eae6689ac4df09ffb067"
       },
       "../src/bot/bot.controller.ts": {
@@ -5209,11 +5213,16 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/shared/schedule.exception.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/restaurant/restaurant.service.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@types/node/querystring.d.ts",
         "../node_modules/rxjs/index.d.ts",
         "../node_modules/rxjs/operators/index.d.ts",
+        "../src/shared/schedule.exception.ts",
         "../src/shared/student-wrapper.interface.ts",
         "../src/tesseract/tesseract.service.ts",
         "../src/restaurant/inferfaces/schedule.interface.ts",
@@ -5246,11 +5255,13 @@
         "../node_modules/firebase-admin/lib/index.d.ts",
         "../node_modules/rxjs/operators/index.d.ts",
         "../src/database/database.service.ts",
+        "../src/shared/student.interface.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "../src/auth/auth.controller.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/rxjs/index.d.ts",
         "../node_modules/rxjs/operators/index.d.ts",
         "../src/restaurant/restaurant.service.ts",
         "../src/auth/auth.service.ts",
@@ -5278,6 +5289,8 @@
         "../src/shared/routine-wrapper.interface.ts",
         "../src/shared/student-wrapper.interface.ts",
         "../src/shared/util/util.service.ts",
+        "../node_modules/@types/node/console.d.ts",
+        "../src/shared/schedule.exception.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],

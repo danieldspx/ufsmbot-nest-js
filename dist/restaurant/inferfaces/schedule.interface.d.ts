@@ -10,5 +10,6 @@ export interface Schedule {
 export declare enum ScheduleStatuses {
     SCHEDULING = 0,
     ERROR = 1,
-    SUCCESS = 2
+    SUCCESS = 2,
+    CANNOT_SCHEDULE = 3
 }

@@ -13,6 +13,7 @@ const common_1 = require("@nestjs/common");
 const queryString = require("querystring");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
+const schedule_exception_1 = require("../shared/schedule.exception");
 const student_wrapper_interface_1 = require("../shared/student-wrapper.interface");
 const tesseract_service_1 = require("../tesseract/tesseract.service");
 const request_service_1 = require("./request/request.service");
@@ -63,29 +64,25 @@ let RestaurantService = class RestaurantService {
             referrer: 'https://portal.ufsm.br/ru/usuario/agendamento/form.html',
             url: 'https://portal.ufsm.br/ru/usuario/agendamento/form.html'
         };
-        return this.requestService.makeRequest(requestConfig).pipe(operators_1.mergeMap(res => {
+        return this.requestService.makeRequest(requestConfig).pipe(operators_1.switchMap(res => {
             if (res.status !== 200) {
-                return rxjs_1.throwError('Error on schedule meal');
+                throw new schedule_exception_1.ScheduleException('Error on schedule meal', schedule_exception_1.ScheduleExceptionType.GENERIC);
             }
-            return rxjs_1.from(res.text()).pipe(operators_1.mergeMap(html => {
-                if (this.hasErrorOnHtml(html)) {
-                    return rxjs_1.throwError('Error on Captcha');
-                }
-                return rxjs_1.of(res);
-            }));
+            return rxjs_1.from(res.text()).pipe(operators_1.switchMap(html => this.throwIfErrorOnHTML(html)), operators_1.mapTo(res));
         }));
     }
-    hasErrorOnHtml(html) {
-        const captchaReg = new RegExp(/<span class="success pill"/g);
-        const scheduledAlready = new RegExp(/Já existe um agendamento com estes dados/g);
-        const invalidField = new RegExp(/Campo inválido/g);
-        const hasSuccess = html.match(captchaReg);
-        const alreadyExist = html.match(scheduledAlready);
-        const errorCaptcha = html.match(invalidField);
-        if (hasSuccess === null || alreadyExist != null || errorCaptcha != null) {
-            return true;
+    throwIfErrorOnHTML(html) {
+        const afterDeadline = html.match(/O prazo para este agendamento já está esgotado/g);
+        const hasSuccess = html.match(/<span class="success pill"/g);
+        const alreadyExist = html.match(/Já existe um agendamento com estes dados/g);
+        const errorCaptcha = html.match(/Campo inválido/g);
+        if (errorCaptcha) {
+            throw new schedule_exception_1.ScheduleException('Error on Captcha', schedule_exception_1.ScheduleExceptionType.CAPTCHA_ERROR);
         }
-        return false;
+        if (hasSuccess == null || afterDeadline || alreadyExist || errorCaptcha) {
+            throw new schedule_exception_1.ScheduleException('Not able to schedule the attempted day', schedule_exception_1.ScheduleExceptionType.NON_RETRIABLE);
+        }
+        return rxjs_1.of(undefined);
     }
     scheduleTheMeal(schedule, student) {
         console.log(`Agendando para ${schedule.matricula}: ${schedule.dia}`);
@@ -104,6 +101,38 @@ let RestaurantService = class RestaurantService {
         }, () => {
             console.log('Erro ao fazer login');
         });
+    }
+    getStudentNameAndCourse(matricula, session) {
+        return rxjs_1.of(undefined);
+        const requestConfig = {
+            headers: [['Cookie', session]],
+            body: `callCount=1\nnextReverseAjaxIndex=0\nc0-scriptName=usuarioRuCaptchaAjaxService\nc0-methodName=search\nc0-id=0\nc0-param0=number:0\nc0-param1=number:10\nc0-e1=string:${matricula}\nc0-e2=string:CAPTCHA\nc0-e3=null:null\nc0-e4=null:null\nc0-param2=Object_Object:{matricula:reference:c0-e1, captcha:reference:c0-e2, orderBy:reference:c0-e3, orderMode:reference:c0-e4}\nbatchId=2\ninstanceId=0\npage=/ru/usuario/transferencia/credito/form.html\nscriptSessionId=5000E7D9FF69206B62CD4E56F325D285348\n`,
+            referrer: 'https://portal.ufsm.br/ru/usuario/transferencia/credito/form.html',
+            url: 'https://portal.ufsm.br/ru/dwr/call/plaincall/usuarioRuCaptchaAjaxService.search.dwr',
+        };
+        return this.requestService.makeRequest(requestConfig).pipe(operators_1.switchMap(async (response) => {
+            const body = await response.text();
+            console.log(body, session);
+            const info = {
+                nome: this.getProperty(body, 'nome'),
+                curso: this.getProperty(this.getProperty(body, 'unidade', false), 'nome')
+            };
+            info.nome = this.unscapeUnicode(info.nome);
+            info.curso = this.unscapeUnicode(info.curso);
+            return info;
+        }));
+    }
+    unscapeUnicode(text) {
+        return decodeURIComponent(JSON.parse(`"${text}"`));
+    }
+    getProperty(data, label, isString = true) {
+        const sizeSlice = label.length + 1;
+        const regExpProp = isString ? `${label}:"(.*?)"` : `${label}:{(.*?)}`;
+        let result = data.match(RegExp(regExpProp))[0].slice(sizeSlice);
+        if (isString) {
+            return result.replace(new RegExp('"', 'g'), '');
+        }
+        return result;
     }
 };
 RestaurantService = __decorate([
