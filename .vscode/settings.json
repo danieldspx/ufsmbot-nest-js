@@ -1,3 +1,24 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "workbench.colorCustomizations": {
+        "terminal.ansiBlue": "#40C4FF",
+        "terminal.ansiBrightBlue": "#80D8FF",
+        "terminal.ansiBlack": "#546E7A",
+        "terminal.ansiBrightBlack": "#B0BEC5",
+        "terminal.ansiRed": "#FF5252",
+        "terminal.ansiBrightRed": "#FF8A80",
+        "terminal.ansiGreen": "#5CF19E",
+        "terminal.ansiBrightGreen": "#B9F6CA",
+        "terminal.ansiYellow": "#FFD740",
+        "terminal.ansiBrightYellow": "#FFE57F",
+        "terminal.ansiCyan": "#64FCDA",
+        "terminal.ansiBrightCyan": "#A7FDEB",
+        "terminal.ansiMagenta": "#FF4081",
+        "terminal.ansiBrightMagenta": "#FF80AB",
+        "terminal.ansiWhite": "#FFFFFF",
+        "terminal.ansiBrightWhite": "#FFFFFF",
+        "activityBar.background": "#263112",
+        "titleBar.activeBackground": "#354519",
+        "titleBar.activeForeground": "#F9FBF4"
+    }
 }
