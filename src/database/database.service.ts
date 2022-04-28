@@ -3,17 +3,15 @@ import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
-import { from, Observable, of } from 'rxjs';
-import { map, mergeMap, take } from 'rxjs/operators';
+import { defer, from, Observable, of } from 'rxjs';
+import { map, mergeMap, switchMap, take } from 'rxjs/operators';
 import { Schedule } from 'src/restaurant/inferfaces/schedule.interface';
 import { RoutineWrapper } from 'src/shared/routine-wrapper.interface';
 import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { Student } from 'src/shared/student.interface';
 import { UtilService } from 'src/shared/util/util.service';
 
-@Injectable({
-    scope: Scope.DEFAULT
-})
+@Injectable()
 export class DatabaseService {
     firestore: FirebaseFirestore.Firestore;
 
@@ -27,39 +25,41 @@ export class DatabaseService {
 
     getStudentByCredentials(matricula: string, password: string): Observable<DocumentReference> {
         const encryptedPassword = this.encrypt(password);
-        return from(
+        return defer(() =>
             this.firestore.collection('estudantes')
                 .where('matricula', '==', matricula)
                 .limit(1)
                 .get()
         ).pipe(
-            mergeMap(querySnapshot => {
+            switchMap(async querySnapshot => {
                 if (querySnapshot.empty) {//User does not exist
-                    return from(this.firestore.collection('estudantes').add({
+                    return this.firestore.collection('estudantes').add({
                         matricula,
                         password: encryptedPassword,
                         lastSchedule: null,
                         lastHistoryCheck: null,
-                    } as Student))
+                        isFriend: false
+                    } as Student);
                 }
 
                 const studentData: Student = querySnapshot.docs[0].data() as Student;
                 if (studentData.password !== password) {
-                    querySnapshot.docs[0].ref.update({ password: encryptedPassword } as Student)
+                    await querySnapshot.docs[0].ref.update({ password: encryptedPassword } as Student)
                 }
-                return of(querySnapshot.docs[0].ref)
+
+                return querySnapshot.docs[0].ref;
             })
-        )
+        );
     }
 
     getStudentByMatricula(matricula: string): Observable<StudentWrapper> {
-        return from(
+        return defer(() => 
             this.firestore.collection('estudantes')
-                .where('matricula', '==', matricula)
-                .limit(1)
-                .get()
+            .where('matricula', '==', matricula)
+            .limit(1)
+            .get()
         ).pipe(
-            mergeMap(querySnapshot => {
+            switchMap(querySnapshot => {
                 const studentData: Student = querySnapshot.docs[0].data() as Student;
                 const studentWrap: StudentWrapper = {
                     matricula,
@@ -67,8 +67,7 @@ export class DatabaseService {
                     ref: querySnapshot.docs[0].ref
                 }
                 return of(studentWrap);
-            }),
-            take(1)
+            })
         )
     }
 

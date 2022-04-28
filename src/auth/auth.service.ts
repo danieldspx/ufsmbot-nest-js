@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { DatabaseService } from 'src/database/database.service';
+import { Student } from 'src/shared/student.interface';
 
 @Injectable()
 export class AuthService {
@@ -9,11 +10,17 @@ export class AuthService {
         private readonly dbService: DatabaseService
     ){}
 
-    getCustomToken(matricula){
-        return this.dbService.getStudentByMatricula(matricula)
+    getCustomToken(matricula: string, password: string, studentInfo?: { nome: string; curso: string; }){
+        return this.dbService.getStudentByCredentials(matricula, password)
         .pipe(
-            map(student => student.ref.path),
-            mergeMap(refPath => admin.auth().createCustomToken(refPath, {matricula})),
+            switchMap(async studentRef => {
+                if (studentInfo && studentInfo.curso && studentInfo.nome) {
+                    await studentRef.update({ curso: studentInfo.curso, nome: studentInfo.nome } as Student);
+                }
+                
+                return studentRef;
+            }),
+            switchMap(studentRef => admin.auth().createCustomToken(studentRef.path, {matricula})),
             map((token) => ({token, message: 'sucess'}))
         )
     }

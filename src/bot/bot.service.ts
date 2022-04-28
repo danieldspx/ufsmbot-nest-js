@@ -10,6 +10,8 @@ import { StudentWrapper } from 'src/shared/student-wrapper.interface';
 import { UtilService } from 'src/shared/util/util.service';
 import moment = require('moment');
 import _ = require('lodash');
+import { Console } from 'console';
+import { ScheduleException, ScheduleExceptionType } from 'src/shared/schedule.exception';
 
 @Injectable()
 export class BotService {
@@ -41,6 +43,7 @@ export class BotService {
                     for (const routine of routines) {
                         const days = this.utilService.convertDaysToSchedule(routine.dias);
                         const lastDay = moment(_.last(days), 'DD/MM/YYYY');
+                        console.log('Will try to schedule', days)
 
                         _.pullAll(days, daysException); // Remove the days that are the exception
 
@@ -67,18 +70,25 @@ export class BotService {
                                                 retryWhen(errors => {
                                                     let retries = 0;
                                                     return errors.pipe(
-                                                        mergeMap(errMsg => {
-                                                            if (++retries >= 6) {
-                                                                return throwError('Retry limit exceeded. Error: ' + errMsg)
+                                                        mergeMap(err => {
+                                                            if (
+                                                                ++retries >= 6 ||
+                                                                (typeof err === 'object'  && (err as ScheduleException).code === ScheduleExceptionType.NON_RETRIABLE)
+                                                            ) {
+                                                                console.error('Retry limit exceeded or cannot be retried. Error: ' + err);
+                                                                return throwError(err)
                                                             }
-                                                            return errMsg;
+                                                            return err;
                                                         }),
                                                         delay(500),
                                                     )
                                                 }),
                                                 catchError((err) => {
-                                                    console.log(err);
-                                                    schedule.status = ScheduleStatuses.ERROR;
+                                                    let status = ScheduleStatuses.ERROR;
+                                                    if (typeof err === 'object' && (err as ScheduleException).code === ScheduleExceptionType.NON_RETRIABLE) {
+                                                        status = ScheduleStatuses.CANNOT_SCHEDULE;
+                                                    }
+                                                    schedule.status = status;
                                                     return of(schedule)
                                                 })
                                             )
@@ -94,12 +104,16 @@ export class BotService {
             )
             .subscribe({
                 next: schedule => {
+                    let logMessage = '[SCHEDULE_SUCCESS]';
                     if(schedule.status === ScheduleStatuses.ERROR) {
                         this.dbService.saveError(student.ref, schedule);
-                        console.log('Schedule Error', schedule.dia)
-                    } else {
-                        console.log('Schedle Sucess', schedule.dia)
+                        logMessage = '[SCHEDULE_ERROR]';
+                    } else if (schedule.status === ScheduleStatuses.CANNOT_SCHEDULE) {
+                        logMessage = '[CANNOT_SCHEDULE]';
                     }
+
+                    console.log(`${logMessage} - Matricula: ${schedule.matricula} Schedule Attempt: ${schedule.dia}`);
+
                     this.restaurantService.logOut(schedule.session);
                 },
                 error: (err) => {

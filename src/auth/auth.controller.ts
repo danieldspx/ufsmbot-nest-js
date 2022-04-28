@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { mergeMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, mergeMap, switchMap } from 'rxjs/operators';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { AuthService } from './auth.service';
 
@@ -13,8 +14,10 @@ export class AuthController {
 
     @Post('login')
     login(@Body() body){
-        return this.restaurantService.auth(body.matricula, body.password).pipe(
-            mergeMap(() => this.authService.getCustomToken(body.matricula))
+        const { matricula, password } = body;
+        return this.restaurantService.auth(matricula, password).pipe(
+            switchMap(session => this.restaurantService.getStudentNameAndCourse(matricula, session).pipe(catchError(() => of(undefined)))),
+            switchMap(studentInfo => this.authService.getCustomToken(matricula, password, studentInfo))
         );
     }
 }
