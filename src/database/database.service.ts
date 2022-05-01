@@ -35,6 +35,7 @@ export class DatabaseService {
                 if (querySnapshot.empty) {//User does not exist
                     return this.firestore.collection('estudantes').add({
                         matricula,
+                        agreementAccepted: true,
                         password: encryptedPassword,
                         lastSchedule: null,
                         lastHistoryCheck: null,
@@ -45,6 +46,10 @@ export class DatabaseService {
                 const studentData: Student = querySnapshot.docs[0].data() as Student;
                 if (studentData.password !== password) {
                     await querySnapshot.docs[0].ref.update({ password: encryptedPassword } as Student)
+                }
+
+                if (!studentData.agreementAccepted) {
+                    await querySnapshot.docs[0].ref.update({ agreementAccepted: true } as Student)
                 }
 
                 return querySnapshot.docs[0].ref;
